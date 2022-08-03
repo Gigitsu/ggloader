@@ -124,9 +124,11 @@ ggl-update() {
 
       if [[ ${from_commit_id} != ${to_commit_id} ]]; then
         printf "Repo [%s] updated: %s -> %s\n" ${repo_name} ${from_commit_id} ${to_commit_id} >> $update_log
+        printf "updated to [%s].\n" ${to_commit_id}
+      else
+        printf "Repo [%s] already up to date\n" ${repo_name} >> $update_log
+        printf "already up to date.\n"
       fi
-
-      printf "done.\n"
     fi
   done
 

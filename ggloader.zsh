@@ -27,6 +27,10 @@ _ggl_set_default GGL_LOG /dev/null
 
 _ggl_set_default GGL_HOME "$HOME/.config/ggl"
 
+_ggl_git_current_branch() {
+	git branch --no-color | grep '^\* ' | grep -v 'no branch' | sed 's/^* //g'
+}
+
 # Usage:
 #   _ggl_ensure_repo output_assoc_arr <args...>
 # TODO:
@@ -92,7 +96,7 @@ ggl-theme() {
 # - try to update itself
 # - accept argument in order to update single repositories
 ggl-update() {
-  local now update_log from_commit_id to_commit_id
+  local now update_log from_commit_id to_commit_id current_branch
 
   update_log="$GGL_HOME/update.log"
   touch $update_log
@@ -101,20 +105,22 @@ ggl-update() {
 
   printf "############ Updated on %s ############\n" ${now} >> $update_log
   for repo_name repo_path in "${(@kv)GGL_REPOS}"; do
-    __local_git () { git -C $repo_path "$@" }
+    _local_git () { git -C $repo_path "$@" }
 
-    __local_git rev-parse --is-inside-work-tree &>>! $GGL_LOG
+    _local_git rev-parse --is-inside-work-tree &>>! $GGL_LOG
 
     if [[ $? == 0 ]]; then 
       printf "Checkig repo [%s]... " ${repo_name}
 
-      from_commit_id=$(__local_git log --format="%H" -n 1)
+      current_branch=$(_ggl_git_current_branch)
 
-      __local_git fetch --depth 1 &>>! $GGL_LOG
-      __local_git reset --hard origin/master &>>! $GGL_LOG
-      __local_git clean -dfx &>>! $GGL_LOG
+      from_commit_id=$(_local_git log --format="%H" -n 1)
 
-      to_commit_id=$(__local_git log --format="%H" -n 1)
+      _local_git fetch --depth 1 &>>! $GGL_LOG
+      _local_git reset --hard origin/$current_branch &>>! $GGL_LOG
+      _local_git clean -dfx &>>! $GGL_LOG
+
+      to_commit_id=$(_local_git log --format="%H" -n 1)
 
       if [[ ${from_commit_id} != ${to_commit_id} ]]; then
         printf "Repo [%s] updated: %s -> %s\n" ${repo_name} ${from_commit_id} ${to_commit_id} >> $update_log

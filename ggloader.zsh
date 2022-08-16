@@ -71,10 +71,10 @@ _ggl_ensure_repo() {
 ggl-bundle() {
   builtin typeset -A bundle; _ggl_ensure_repo  'bundle' ${=@}
 
-  target=${2:-${bundle[name]:t}.plugin.zsh}
+  bundle_file=${2:-${bundle[name]:t}.plugin.zsh}
 
   set --
-  source "${bundle[path]}/$target"
+  source "${bundle[path]}/$bundle_file"
 }
 
 # Download and sources a zsh theme
@@ -83,10 +83,27 @@ ggl-bundle() {
 ggl-theme() {
   builtin typeset -A theme; _ggl_ensure_repo  'theme' ${=@}
 
-  target=${2:-${theme[path]:t}.zsh-theme}
+  theme_file=${2:-${theme[path]:t}.zsh-theme}
 
   set --
-  source "${theme[path]}/$target"
+  source "${theme[path]}/$theme_file"
+}
+
+# Download a configuration repository and makes a symlink to home directory, if not exists
+# Usage:
+#   ggl config <github_user>/<repository>[/<path>] [<config_file_name>]
+ggl-config() {
+  local ln_source_file ln_target_file
+  builtin typeset -A config; _ggl_ensure_repo  'config' ${=@}
+
+  conf_file=${2:-${config[path]:t}.conf}
+
+  ln_source_file=${config[path]}/$conf_file
+  ln_target_file=$HOME/$conf_file
+
+  if [[ ! -e "$ln_target_file" ]]; then
+    ln -s $ln_source_file $ln_target_file
+  fi
 }
 
 # Updates every plugin
@@ -139,23 +156,23 @@ ggl-update() {
 # Usage:
 #   ggl install-local <absolute_source_path> <github_user>/<repository>[/<path>]
 ggl-install-local() {
-  local source_path install_path plugin_name 
+  local ln_source_file ln_target_file plugin_name 
 
-  source_path=$1
+  ln_source_file=$1
   plugin_name=${2:l}
-  install_path="$GGL_HOME/$plugin_name"
+  ln_target_file="$GGL_HOME/$plugin_name"
 
   if [[ ! -d "$source_path" ]]; then
-    source_path=$(dirname $source_path)
+    ln_source_file=$(dirname $source_path)
   fi
 
-  if [[ ! -d "$install_path" ]]; then
-    mkdir -p "$(dirname $install_path)"
-    ln -s $source_path $install_path
+  if [[ ! -d "$ln_target_file" ]]; then
+    mkdir -p "$(dirname $ln_target_file)"
+    ln -s $ln_source_file $ln_target_file
 
-    printf "Installed bundle [%s] from [%s]\n" $plugin_name $source_path
+    printf "Installed bundle [%s] from [%s]\n" $plugin_name $ln_source_file
   else
-    printf "Bundle [%s] already installed from [%s]\n" $plugin_name $(readlink -f $install_path)
+    printf "Bundle [%s] already installed from [%s]\n" $plugin_name $(readlink -f $ln_target_file)
   fi
 }
 

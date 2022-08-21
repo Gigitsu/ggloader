@@ -89,7 +89,9 @@ ggl-theme() {
   source "${theme[path]}/$theme_file"
 }
 
-# Download a configuration repository and makes a symlink to home directory, if not exists
+# Download a configuration repository and makes a symlink to home directory, if not exists.
+# A `.` prefix is automatically added to the symlink created if the original file doesn't have any.
+#
 # Usage:
 #   ggl config <github_user>/<repository>[/<path>] [<config_file_name>]
 ggl-config() {
@@ -99,7 +101,8 @@ ggl-config() {
   conf_file=${2:-${config[path]:t}.conf}
 
   ln_source_file=${config[path]}/$conf_file
-  ln_target_file=$HOME/$conf_file
+
+  [[ $conf_file == .* ]] && ln_target_file=$HOME/$conf_file || ln_target_file=$HOME/.$conf_file
 
   if [[ ! -e "$ln_target_file" ]]; then
     ln -s $ln_source_file $ln_target_file

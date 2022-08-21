@@ -162,8 +162,8 @@ ggl-install-local() {
   plugin_name=${2:l}
   ln_target_file="$GGL_HOME/$plugin_name"
 
-  if [[ ! -d "$source_path" ]]; then
-    ln_source_file=$(dirname $source_path)
+  if [[ ! -d "$ln_source_file" ]]; then
+    ln_source_file=$(dirname $ln_source_file)
   fi
 
   if [[ ! -d "$ln_target_file" ]]; then

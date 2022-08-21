@@ -46,3 +46,7 @@ ggl install-local <absolute_source_path> <github_user>/<repository>[/<path>]
 - Only github and local folders are supported
 - The update method cannot update a single bundle/theme
 - No cache mechanism
+
+## Enhancements
+
+- Make install local automatically ad a local suffix to user name, and make the loader try both local and non local installations"

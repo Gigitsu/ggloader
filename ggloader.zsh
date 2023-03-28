@@ -25,7 +25,7 @@ _ggl_set_default () {
 
 _ggl_set_default GGL_LOG /dev/null
 
-_ggl_set_default GGL_HOME "$HOME/.config/ggl"
+_ggl_set_default GGL_HOME "$HOME/.cache/ggl"
 
 _ggl_git_current_branch() {
 	git branch --no-color | grep '^\* ' | grep -v 'no branch' | sed 's/^* //g'

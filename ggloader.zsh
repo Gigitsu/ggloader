@@ -184,13 +184,15 @@ ggl-help () {
   cat <<EOF
 
 GGLoader is a very simple plugin management system for zsh. It makes it easy to
-grab awesome shell scripts and utilities, put up on Github.
+grab awesome shell scripts from GitHub and install it.
 
 Usage: ggl <command> [args]
 
 Commands:
   bundle       Install and load a plugin.
+  help         Print this help
   theme        Install and load a theme
+  update       Check installed bundle for updates
 EOF
 }
 

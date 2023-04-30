@@ -179,6 +179,25 @@ ggl-install-local() {
   fi
 }
 
+ggl-completion () {
+
+  cat <<EOF
+#compdef ggl
+
+local -a _ggl_cmds
+
+_ggl_cmds=(
+  'bundle:Install and load a plugin'
+  'completion:Generate and print completion script'
+  'help:Print this help'
+  'theme:Install and load a theme'
+  'update:Check installed bundle for updates'
+)
+
+_describe 'command' _ggl_cmds
+EOF
+}
+
 ggl-help () {
 
   cat <<EOF
@@ -189,7 +208,8 @@ grab awesome shell scripts from GitHub and install it.
 Usage: ggl <command> [args]
 
 Commands:
-  bundle       Install and load a plugin.
+  bundle       Install and load a plugin
+  completion   Generate and print completion script
   help         Print this help
   theme        Install and load a theme
   update       Check installed bundle for updates
